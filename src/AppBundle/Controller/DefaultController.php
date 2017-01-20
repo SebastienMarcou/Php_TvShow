@@ -22,13 +22,16 @@ class DefaultController extends Controller
      * @Route("/shows", name="shows")
      * @Template()
      */
-    public function showsAction()
+    public function showsAction(Request $request)
     {
         $em = $this->get('doctrine')->getManager();
         $repo = $em->getRepository('AppBundle:TVShow');
+        $result = $repo->findAll();
+        $paginator = $this->get('knp_paginator');
+        $paginate = $paginator->paginate($result, $request->query->getInt('page',1),6);
 
         return [
-            'shows' => $repo->findAll()
+            'shows' => $paginate
         ];
     }
 
@@ -44,6 +47,35 @@ class DefaultController extends Controller
         return [
             'show' => $repo->find($id)
         ];        
+    }
+
+    /**
+     * @Route("/search", name="search")
+     * @Template()
+     */
+    public function searchAction(Request $request)
+    {
+        $word = $request->get('search');
+        $words = str_word_count($word, 1);
+
+
+        $em = $this->get('doctrine')->getManager();
+        $repo = $em->getRepository('AppBundle:TVShow');
+
+        $query = $repo->createQueryBuilder('q')
+        ->where('q.name LIKE :keyword')
+        ->setParameter(':keyword', '%' .$words[0] .'%');
+
+        $query = $query->orderBy('q.name', 'ASC')->getQuery();
+        $allShows = $query->getResult();
+
+        return [
+            'allShows' => $allShows,
+            'search' => $words
+
+        ];
+
+
     }
 
     /**

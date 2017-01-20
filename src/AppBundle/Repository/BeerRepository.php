@@ -10,4 +10,6 @@ namespace AppBundle\Repository;
  */
 class BeerRepository extends \Doctrine\ORM\EntityRepository
 {
+
+	
 }
