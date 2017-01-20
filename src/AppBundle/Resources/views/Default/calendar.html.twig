@@ -5,7 +5,11 @@
 {% block contents %}
     <section>
     	<div class="container">
-    		
+    		{% for episode in episodes %}
+    			<p>
+    				{{episode.date|date("d/m/Y")}}  {{episode.season.show.name}} {{episode.name}} 
+    			</p>
+    		{% endfor %}		
     	</div>
     </section>
 {% endblock %}
